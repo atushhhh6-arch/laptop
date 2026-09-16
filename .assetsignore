@@ -2,3 +2,4 @@ _worker.js
 wrangler.jsonc
 README.md
 .gitignore
+datafast-worker.js
