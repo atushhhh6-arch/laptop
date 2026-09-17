@@ -4,6 +4,12 @@
   "main": "./worker-entry.js",
   "compatibility_date": "2026-09-16",
   "keep_vars": true,
+  "routes": [
+    {
+      "pattern": "ayushbirthday.lol",
+      "custom_domain": true
+    }
+  ],
   "assets": {
     "directory": ".",
     "binding": "ASSETS",
