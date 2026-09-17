@@ -1,6 +1,47 @@
 // Cloudflare rebuild trigger after D1 bootstrap hardening.
 import app from './datafast-worker.js';
 
+const DATAFAST_WIDGET = `
+<style>
+  .datafastLiveWidget {
+    position: fixed;
+    left: 18px;
+    bottom: 18px;
+    z-index: 9990;
+    width: 320px;
+    height: 72px;
+    border-radius: 18px;
+    overflow: hidden;
+    background: transparent;
+    filter: drop-shadow(0 12px 28px rgba(0,0,0,.20));
+  }
+  .datafastLiveWidget iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    display: block;
+    background: transparent !important;
+  }
+  @media (max-width: 640px) {
+    .datafastLiveWidget {
+      left: 12px;
+      bottom: 12px;
+      width: min(290px, calc(100vw - 24px));
+      height: 68px;
+    }
+  }
+</style>
+<div class="datafastLiveWidget" aria-label="Live website visitors powered by DataFast">
+  <iframe
+    src="https://datafa.st/widgets/6aaac83b36035bb08e146086/realtime?mainTextSize=16&primaryColor=%23e78468"
+    style="background: transparent !important; border: none; width: 100%; height: 100%;"
+    frameborder="0"
+    allowtransparency="true"
+    title="DataFast Widget"
+    loading="lazy"
+  ></iframe>
+</div>`;
+
 const SCHEMA = [
   `CREATE TABLE IF NOT EXISTS sponsor_spots_v2 (
     spot_id TEXT PRIMARY KEY,
@@ -133,14 +174,26 @@ async function health(env) {
 
 async function delegate(request, env, ctx) {
   const response = await app.fetch(request, delegatedEnv(env), ctx);
+  const url = new URL(request.url);
 
-  if (response.status >= 500 && (new URL(request.url)).pathname.startsWith('/api/')) {
+  if (response.status >= 500 && url.pathname.startsWith('/api/')) {
     try {
       const data = await response.clone().json();
       if (data && data.error === 'Server error.' && data.detail) {
         return json({ error: data.detail, detail: data.detail }, response.status);
       }
     } catch {}
+  }
+
+  const contentType = response.headers.get('content-type') || '';
+  if (!url.pathname.startsWith('/api/') && contentType.includes('text/html')) {
+    return new HTMLRewriter()
+      .on('body', {
+        element(body) {
+          body.append(DATAFAST_WIDGET, { html: true });
+        },
+      })
+      .transform(response);
   }
 
   return response;
