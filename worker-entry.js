@@ -14,6 +14,14 @@ const DATAFAST_WIDGET = `
     overflow: hidden;
     background: transparent;
     filter: drop-shadow(0 12px 28px rgba(0,0,0,.20));
+    display: block;
+    cursor: pointer;
+    text-decoration: none;
+    transition: transform .18s ease, filter .18s ease;
+  }
+  .datafastLiveWidget:hover {
+    transform: translateY(-2px);
+    filter: drop-shadow(0 16px 34px rgba(0,0,0,.24));
   }
   .datafastLiveWidget iframe {
     width: 100%;
@@ -21,6 +29,7 @@ const DATAFAST_WIDGET = `
     border: 0;
     display: block;
     background: transparent !important;
+    pointer-events: none;
   }
   @media (max-width: 640px) {
     .datafastLiveWidget {
@@ -31,7 +40,14 @@ const DATAFAST_WIDGET = `
     }
   }
 </style>
-<div class="datafastLiveWidget" aria-label="Live website visitors powered by DataFast">
+<a
+  class="datafastLiveWidget"
+  href="https://datafa.st/share/6aaac83b36035bb08e146086"
+  target="_blank"
+  rel="noopener noreferrer"
+  aria-label="Open public DataFast analytics dashboard"
+  title="View live visitors, views, revenue and full analytics"
+>
   <iframe
     src="https://datafa.st/widgets/6aaac83b36035bb08e146086/realtime?mainTextSize=16&primaryColor=%23e78468"
     style="background: transparent !important; border: none; width: 100%; height: 100%;"
@@ -39,8 +55,9 @@ const DATAFAST_WIDGET = `
     allowtransparency="true"
     title="DataFast Widget"
     loading="lazy"
+    tabindex="-1"
   ></iframe>
-</div>`;
+</a>`;
 
 const SCHEMA = [
   `CREATE TABLE IF NOT EXISTS sponsor_spots_v2 (
