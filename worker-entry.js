@@ -60,6 +60,43 @@ const DATAFAST_WIDGET = `
 </a>`;
 
 const HOMEPAGE_PATCH = `
+<style>
+  .birthdayCountdownStable {
+    display: flex;
+    gap: 18px;
+    flex-wrap: nowrap;
+    margin-top: 32px;
+    align-items: flex-start;
+  }
+  .birthdayCountdownStable .time {
+    min-width: 76px;
+  }
+  .birthdayCountdownStable .time strong {
+    display: block;
+    width: 2.6ch;
+    font-family: "Segoe UI Variable Display", "Aptos Display", Inter, ui-sans-serif, system-ui, sans-serif;
+    font-size: 31px;
+    line-height: 1;
+    letter-spacing: -1.1px;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums lining-nums;
+    font-feature-settings: "tnum" 1, "lnum" 1;
+    white-space: nowrap;
+  }
+  .birthdayCountdownStable .time span {
+    display: block;
+    margin-top: 6px;
+    font-size: 10px;
+    color: var(--muted);
+    font-weight: 900;
+    letter-spacing: 1.35px;
+  }
+  @media (max-width: 560px) {
+    .birthdayCountdownStable { gap: 10px; }
+    .birthdayCountdownStable .time { min-width: 64px; }
+    .birthdayCountdownStable .time strong { font-size: 27px; }
+  }
+</style>
 <script>
 (function () {
   function byEyebrow(label) {
@@ -76,7 +113,7 @@ const HOMEPAGE_PATCH = `
   if (heroTag) heroTag.textContent = 'NOVEMBER 13 · MY BIRTHDAY';
 
   var heroLead = document.querySelector('.hero .lead');
-  if (heroLead) heroLead.innerHTML = "I'm personally committing to <b>at least 100 burgers</b> for this birthday project no matter what. November 13 is my birthday and the reference date, but if all sponsor spots fill early and logistics are ready, the sponsored distribution can happen <b>before my birthday</b>. Sponsors are buying real brand placements and helping back the overall project.";
+  if (heroLead) heroLead.innerHTML = "I'm 17, so this is what I can realistically commit on my own right now: <b>at least 100 burgers</b>. November 13 is my birthday and the reference date, but if all sponsor spots fill early and logistics are ready, the sponsored distribution can happen <b>before my birthday</b>. Sponsors are buying real brand placements and helping back the overall project.";
 
   var boxSub = document.querySelector('.boxMessage span');
   if (boxSub) boxSub.textContent = 'Take a spot. Back the project. Get seen while doing it.';
@@ -92,14 +129,14 @@ const HOMEPAGE_PATCH = `
     }
   }
 
-  var birthday = byEyebrow('ON MY BIRTHDAY') || byEyebrow('BIRTHDAY PROJECT');
+  var birthday = byEyebrow('ON MY BIRTHDAY') || byEyebrow('BIRTHDAY PROJECT · NOVEMBER 13') || byEyebrow('BIRTHDAY PROJECT');
   if (birthday) {
     var eyebrow = birthday.querySelector('.eyebrow');
     var heading = birthday.querySelector('h2');
     var copy = birthday.querySelector('.copy');
     if (eyebrow) eyebrow.textContent = 'BIRTHDAY PROJECT · NOVEMBER 13';
     if (heading) heading.textContent = '100 burgers are the commitment. The project can happen earlier.';
-    if (copy) copy.innerHTML = "I'm personally funding <b>at least 100 burgers</b> for this birthday project. November 13 is my birthday, but the sponsored distribution does not have to wait until that exact day. If the sponsor spots fill sooner and the logistics are ready, I may run it earlier. Sponsor payments are for brand placements in the project; they are not restricted donations.";
+    if (copy) copy.innerHTML = "I'm 17, so <b>100 burgers is what I can realistically commit by myself right now.</b> I'm personally funding at least 100 burgers for this birthday project. November 13 is my birthday, but the sponsored distribution does not have to wait until that exact day. If the sponsor spots fill sooner and the logistics are ready, I may run it earlier. Sponsor payments are for brand placements in the project; they are not restricted donations.";
   }
 
   document.querySelectorAll('.faqItem').forEach(function (item) {
@@ -108,7 +145,7 @@ const HOMEPAGE_PATCH = `
     if (!q || !a) return;
     var text = q.textContent.toLowerCase();
     if (text.indexOf('why start with 100 burgers') !== -1) {
-      a.textContent = "Because at least 100 burgers are my personal commitment for the birthday project. Sponsorship can help me make the overall project bigger, but I am not promising that every sponsorship dollar will be spent on food.";
+      a.textContent = "I'm 17, and at least 100 burgers are what I can realistically commit to personally right now. Sponsorship can help make the overall project bigger, but I am not promising that every sponsorship dollar will be spent on food.";
     }
     if (text.indexOf('what does sponsorship money support') !== -1) {
       a.textContent = 'A sponsor payment buys an advertising/brand placement in the project. Revenue may be used for food, packaging, printing, transport, payment fees, website/platform costs, promotion, production work, time/labor and other project or business expenses. There is no fixed percentage promised for food, and remaining revenue may be retained as compensation or profit after obligations, refunds, fees and expenses.';
@@ -118,17 +155,32 @@ const HOMEPAGE_PATCH = `
   var transparency = byEyebrow('TRANSPARENCY');
   if (transparency) {
     var transparencyCopy = transparency.querySelector('.copy');
-    if (transparencyCopy) transparencyCopy.innerHTML = 'I personally commit to <b>at least 100 burgers</b>. Sponsor payments are purchases of advertising/brand placements, not restricted donations. I decide how sponsorship revenue is allocated across food, packaging, printing, transport, payment fees, website/platform costs, promotion, creative/production work, time/labor and other project or business expenses. <b>No fixed amount or percentage of sponsorship revenue is promised for food unless I state it in writing.</b> Revenue remaining after project obligations, refunds, taxes/fees and expenses may be retained as compensation or profit.';
+    if (transparencyCopy) transparencyCopy.innerHTML = 'I am 17 and personally commit to <b>at least 100 burgers</b>, which is what I can realistically guarantee on my own right now. Sponsor payments are purchases of advertising/brand placements, not restricted donations. I decide how sponsorship revenue is allocated across food, packaging, printing, transport, payment fees, website/platform costs, promotion, creative/production work, time/labor and other project or business expenses. <b>No fixed amount or percentage of sponsorship revenue is promised for food unless I state it in writing.</b> Revenue remaining after project obligations, refunds, taxes/fees and expenses may be retained as compensation or profit.';
+  }
+
+  var originalCountdown = document.querySelector('.hero .countdown');
+  if (originalCountdown && !document.getElementById('birthdayCountdownStable')) {
+    originalCountdown.style.display = 'none';
+    var stableCountdown = document.createElement('div');
+    stableCountdown.className = 'birthdayCountdownStable';
+    stableCountdown.id = 'birthdayCountdownStable';
+    stableCountdown.setAttribute('aria-label', 'Countdown to November 13 birthday');
+    stableCountdown.innerHTML = '<div class="time"><strong id="bdDays">00</strong><span>DAYS</span></div><div class="time"><strong id="bdHours">00</strong><span>HOURS</span></div><div class="time"><strong id="bdMinutes">00</strong><span>MINUTES</span></div><div class="time"><strong id="bdSeconds">00</strong><span>SECONDS</span></div>';
+    originalCountdown.insertAdjacentElement('afterend', stableCountdown);
   }
 
   var target = new Date('2026-11-13T00:00:00+05:30').getTime();
+  var lastSecond = -1;
   function updateBirthdayCountdown() {
     var left = Math.max(0, target - Date.now());
+    var wholeSeconds = Math.floor(left / 1000);
+    if (wholeSeconds === lastSecond) return;
+    lastSecond = wholeSeconds;
     var values = {
-      days: Math.floor(left / 86400000),
-      hours: Math.floor((left % 86400000) / 3600000),
-      minutes: Math.floor((left % 3600000) / 60000),
-      seconds: Math.floor((left % 60000) / 1000)
+      bdDays: Math.floor(left / 86400000),
+      bdHours: Math.floor((left % 86400000) / 3600000),
+      bdMinutes: Math.floor((left % 3600000) / 60000),
+      bdSeconds: Math.floor((left % 60000) / 1000)
     };
     Object.keys(values).forEach(function (id) {
       var el = document.getElementById(id);
@@ -136,7 +188,11 @@ const HOMEPAGE_PATCH = `
     });
   }
   updateBirthdayCountdown();
-  setInterval(updateBirthdayCountdown, 200);
+  var delay = 1000 - (Date.now() % 1000) + 15;
+  setTimeout(function startAlignedCountdown() {
+    updateBirthdayCountdown();
+    setInterval(updateBirthdayCountdown, 1000);
+  }, delay);
 })();
 </script>`;
 
