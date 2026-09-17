@@ -59,59 +59,93 @@ const DATAFAST_WIDGET = `
   ></iframe>
 </a>`;
 
-const HOMEPAGE_PATCH = `
+const HOMEPAGE_HEAD = `
 <style>
+  /* Hide the old October timer before first paint so two timers can never flash. */
+  .hero .countdown { display: none !important; }
   .birthdayCountdownStable {
-    display: flex;
-    gap: 18px;
-    flex-wrap: nowrap;
+    display: grid;
+    grid-template-columns: repeat(4, 78px);
+    gap: 14px;
     margin-top: 32px;
-    align-items: flex-start;
+    align-items: start;
+    width: max-content;
+    max-width: 100%;
   }
   .birthdayCountdownStable .time {
-    min-width: 76px;
+    width: 78px;
+    min-width: 78px;
+    text-align: center;
+    contain: layout paint;
   }
   .birthdayCountdownStable .time strong {
     display: block;
-    width: 2.6ch;
-    font-family: "Segoe UI Variable Display", "Aptos Display", Inter, ui-sans-serif, system-ui, sans-serif;
-    font-size: 31px;
-    line-height: 1;
-    letter-spacing: -1.1px;
+    width: 78px;
+    height: 34px;
+    line-height: 34px;
+    overflow: hidden;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    font-size: 30px;
+    letter-spacing: 0;
     font-weight: 800;
     font-variant-numeric: tabular-nums lining-nums;
     font-feature-settings: "tnum" 1, "lnum" 1;
+    font-synthesis: none;
     white-space: nowrap;
+    text-align: center;
+    transform: translateZ(0);
+    backface-visibility: hidden;
   }
   .birthdayCountdownStable .time span {
     display: block;
-    margin-top: 6px;
+    margin-top: 7px;
     font-size: 10px;
     color: var(--muted);
     font-weight: 900;
     letter-spacing: 1.35px;
+    white-space: nowrap;
   }
-  .birthdayImpactLine {
-    max-width: 900px;
-    margin-top: 30px;
-    padding: 20px 22px;
-    border-left: 4px solid var(--ink);
-    border-radius: 0 18px 18px 0;
-    background: rgba(255,255,255,.42);
-    font-family: "Segoe UI Variable Display", "Aptos Display", Inter, ui-sans-serif, system-ui, sans-serif;
-    font-size: clamp(22px, 2.4vw, 34px);
-    line-height: 1.15;
-    letter-spacing: -1.1px;
-    font-weight: 850;
+  #birthdayImpactLine {
+    max-width: 930px;
+    margin-top: 34px;
+    padding: 24px 26px;
+    border: 1px solid rgba(23,23,23,.13);
+    border-left: 5px solid var(--ink);
+    border-radius: 0 22px 22px 0;
+    background: rgba(255,255,255,.52);
+    box-shadow: 0 14px 38px rgba(50,35,16,.05);
+  }
+  #birthdayImpactLine span {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--muted);
+    font-size: 10px;
+    font-weight: 950;
+    letter-spacing: 1.8px;
+  }
+  #birthdayImpactLine strong {
+    display: block;
     color: var(--ink);
+    font-family: "Segoe UI Variable Display", "Aptos Display", Inter, ui-sans-serif, system-ui, sans-serif;
+    font-size: clamp(24px, 2.7vw, 38px);
+    line-height: 1.12;
+    letter-spacing: -1.25px;
+    font-weight: 850;
   }
   @media (max-width: 560px) {
-    .birthdayCountdownStable { gap: 10px; }
-    .birthdayCountdownStable .time { min-width: 64px; }
-    .birthdayCountdownStable .time strong { font-size: 27px; }
-    .birthdayImpactLine { font-size: 23px; padding: 17px 18px; }
+    .birthdayCountdownStable {
+      grid-template-columns: repeat(4, 62px);
+      gap: 7px;
+    }
+    .birthdayCountdownStable .time,
+    .birthdayCountdownStable .time strong { width: 62px; min-width: 62px; }
+    .birthdayCountdownStable .time strong { font-size: 26px; }
+    #birthdayImpactLine { padding: 19px 19px; margin-top: 28px; }
+    #birthdayImpactLine strong { font-size: 24px; }
   }
-</style>
+</style>`;
+
+const HOMEPAGE_PATCH = `
 <script>
 (function () {
   function byEyebrow(label) {
@@ -149,15 +183,18 @@ const HOMEPAGE_PATCH = `
     var eyebrow = birthday.querySelector('.eyebrow');
     var heading = birthday.querySelector('h2');
     var copy = birthday.querySelector('.copy');
+    var birthdayWrap = birthday.querySelector('.wrap') || birthday;
     if (eyebrow) eyebrow.textContent = 'BIRTHDAY PROJECT · NOVEMBER 13';
     if (heading) heading.textContent = '100 burgers are the commitment. The project can happen earlier.';
     if (copy) copy.innerHTML = "I'm 17, so <b>100 burgers is what I can realistically commit by myself right now.</b> I'm personally funding at least 100 burgers for this birthday project. November 13 is my birthday, but the sponsored distribution does not have to wait until that exact day. If the sponsor spots fill sooner and the logistics are ready, I may run it earlier. Sponsor payments are for brand placements in the project; they are not restricted donations.";
-    if (!birthday.querySelector('.birthdayImpactLine')) {
-      var impact = document.createElement('p');
-      impact.className = 'birthdayImpactLine';
-      impact.textContent = "You’re not just promoting your brand here — you’re becoming part of a project that puts a real meal in someone’s hands.";
-      (copy || heading || birthday).insertAdjacentElement('afterend', impact);
+
+    var impact = document.getElementById('birthdayImpactLine');
+    if (!impact) {
+      impact = document.createElement('div');
+      impact.id = 'birthdayImpactLine';
+      birthdayWrap.appendChild(impact);
     }
+    impact.innerHTML = '<span>MORE THAN A PROMO</span><strong>You’re not just promoting your brand here — you’re becoming part of a project that puts a real meal in someone’s hands.</strong>';
   }
 
   document.querySelectorAll('.faqItem').forEach(function (item) {
@@ -179,9 +216,14 @@ const HOMEPAGE_PATCH = `
     if (transparencyCopy) transparencyCopy.innerHTML = 'I am 17 and personally commit to <b>at least 100 burgers</b>, which is what I can realistically guarantee on my own right now. Sponsor payments are purchases of advertising/brand placements, not restricted donations. I decide how sponsorship revenue is allocated across food, packaging, printing, transport, payment fees, website/platform costs, promotion, creative/production work, time/labor and other project or business expenses. <b>No fixed amount or percentage of sponsorship revenue is promised for food unless I state it in writing.</b> Revenue remaining after project obligations, refunds, taxes/fees and expenses may be retained as compensation or profit.';
   }
 
+  var oldStable = document.getElementById('birthdayCountdownStable');
+  if (oldStable) oldStable.remove();
+
   var originalCountdown = document.querySelector('.hero .countdown');
-  if (originalCountdown && !document.getElementById('birthdayCountdownStable')) {
-    originalCountdown.style.display = 'none';
+  if (originalCountdown) {
+    originalCountdown.style.setProperty('display', 'none', 'important');
+    originalCountdown.setAttribute('aria-hidden', 'true');
+
     var stableCountdown = document.createElement('div');
     stableCountdown.className = 'birthdayCountdownStable';
     stableCountdown.id = 'birthdayCountdownStable';
@@ -191,29 +233,26 @@ const HOMEPAGE_PATCH = `
   }
 
   var target = new Date('2026-11-13T00:00:00+05:30').getTime();
-  var lastSecond = -1;
-  function updateBirthdayCountdown() {
-    var left = Math.max(0, target - Date.now());
-    var wholeSeconds = Math.floor(left / 1000);
-    if (wholeSeconds === lastSecond) return;
-    lastSecond = wholeSeconds;
-    var values = {
-      bdDays: Math.floor(left / 86400000),
-      bdHours: Math.floor((left % 86400000) / 3600000),
-      bdMinutes: Math.floor((left % 3600000) / 60000),
-      bdSeconds: Math.floor((left % 60000) / 1000)
-    };
-    Object.keys(values).forEach(function (id) {
-      var el = document.getElementById(id);
-      if (el) el.textContent = String(values[id]).padStart(2, '0');
-    });
+  var lastValues = {};
+  function setValue(id, value) {
+    var text = String(value).padStart(2, '0');
+    if (lastValues[id] === text) return;
+    lastValues[id] = text;
+    var el = document.getElementById(id);
+    if (el) el.textContent = text;
   }
-  updateBirthdayCountdown();
-  var delay = 1000 - (Date.now() % 1000) + 15;
-  setTimeout(function startAlignedCountdown() {
-    updateBirthdayCountdown();
-    setInterval(updateBirthdayCountdown, 1000);
-  }, delay);
+  function renderBirthdayCountdown() {
+    var left = Math.max(0, target - Date.now());
+    setValue('bdDays', Math.floor(left / 86400000));
+    setValue('bdHours', Math.floor((left % 86400000) / 3600000));
+    setValue('bdMinutes', Math.floor((left % 3600000) / 60000));
+    setValue('bdSeconds', Math.floor((left % 60000) / 1000));
+
+    if (left <= 0) return;
+    var wait = 1000 - (Date.now() % 1000) + 30;
+    window.setTimeout(renderBirthdayCountdown, wait);
+  }
+  renderBirthdayCountdown();
 })();
 </script>`;
 
@@ -363,14 +402,21 @@ async function delegate(request, env, ctx) {
   const contentType = response.headers.get('content-type') || '';
   if (!url.pathname.startsWith('/api/') && contentType.includes('text/html')) {
     var isHome = url.pathname === '/' || url.pathname === '/index.html';
-    return new HTMLRewriter()
-      .on('body', {
-        element(body) {
-          body.append(DATAFAST_WIDGET, { html: true });
-          if (isHome) body.append(HOMEPAGE_PATCH, { html: true });
+    var rewriter = new HTMLRewriter();
+    if (isHome) {
+      rewriter.on('head', {
+        element(head) {
+          head.append(HOMEPAGE_HEAD, { html: true });
         },
-      })
-      .transform(response);
+      });
+    }
+    rewriter.on('body', {
+      element(body) {
+        body.append(DATAFAST_WIDGET, { html: true });
+        if (isHome) body.append(HOMEPAGE_PATCH, { html: true });
+      },
+    });
+    return rewriter.transform(response);
   }
 
   return response;
