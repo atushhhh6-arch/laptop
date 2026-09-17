@@ -61,7 +61,6 @@ const DATAFAST_WIDGET = `
 
 const HOMEPAGE_HEAD = `
 <style>
-  /* Hide the old October timer before first paint so two timers can never flash. */
   .hero .countdown { display: none !important; }
   .birthdayCountdownStable {
     display: grid;
@@ -403,6 +402,17 @@ async function delegate(request, env, ctx) {
   if (!url.pathname.startsWith('/api/') && contentType.includes('text/html')) {
     var isHome = url.pathname === '/' || url.pathname === '/index.html';
     var rewriter = new HTMLRewriter();
+
+    // The site now lives on ayushbirthday.lol. The old tracking script still ships
+    // the workers.dev domain, which breaks DataFast's visitor cookie on the custom
+    // domain and can collapse realtime users. Rewrite it before it reaches browsers.
+    rewriter.on('script[data-website-id="dfid_ILGOJScmwXB3t7WkgO5vt"]', {
+      element(script) {
+        script.setAttribute('data-domain', 'ayushbirthday.lol');
+        script.setAttribute('data-allowed-hostnames', 'ayushbirthday.lol,laptop.atushhhh6.workers.dev');
+      },
+    });
+
     if (isHome) {
       rewriter.on('head', {
         element(head) {
