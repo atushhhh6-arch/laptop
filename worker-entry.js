@@ -91,10 +91,25 @@ const HOMEPAGE_PATCH = `
     font-weight: 900;
     letter-spacing: 1.35px;
   }
+  .birthdayImpactLine {
+    max-width: 900px;
+    margin-top: 30px;
+    padding: 20px 22px;
+    border-left: 4px solid var(--ink);
+    border-radius: 0 18px 18px 0;
+    background: rgba(255,255,255,.42);
+    font-family: "Segoe UI Variable Display", "Aptos Display", Inter, ui-sans-serif, system-ui, sans-serif;
+    font-size: clamp(22px, 2.4vw, 34px);
+    line-height: 1.15;
+    letter-spacing: -1.1px;
+    font-weight: 850;
+    color: var(--ink);
+  }
   @media (max-width: 560px) {
     .birthdayCountdownStable { gap: 10px; }
     .birthdayCountdownStable .time { min-width: 64px; }
     .birthdayCountdownStable .time strong { font-size: 27px; }
+    .birthdayImpactLine { font-size: 23px; padding: 17px 18px; }
   }
 </style>
 <script>
@@ -137,6 +152,12 @@ const HOMEPAGE_PATCH = `
     if (eyebrow) eyebrow.textContent = 'BIRTHDAY PROJECT · NOVEMBER 13';
     if (heading) heading.textContent = '100 burgers are the commitment. The project can happen earlier.';
     if (copy) copy.innerHTML = "I'm 17, so <b>100 burgers is what I can realistically commit by myself right now.</b> I'm personally funding at least 100 burgers for this birthday project. November 13 is my birthday, but the sponsored distribution does not have to wait until that exact day. If the sponsor spots fill sooner and the logistics are ready, I may run it earlier. Sponsor payments are for brand placements in the project; they are not restricted donations.";
+    if (!birthday.querySelector('.birthdayImpactLine')) {
+      var impact = document.createElement('p');
+      impact.className = 'birthdayImpactLine';
+      impact.textContent = "You’re not just promoting your brand here — you’re becoming part of a project that puts a real meal in someone’s hands.";
+      (copy || heading || birthday).insertAdjacentElement('afterend', impact);
+    }
   }
 
   document.querySelectorAll('.faqItem').forEach(function (item) {
