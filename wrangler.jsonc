@@ -3,9 +3,17 @@
   "name": "laptop",
   "main": "./datafast-worker.js",
   "compatibility_date": "2026-09-16",
+  "keep_vars": true,
   "assets": {
     "directory": ".",
     "binding": "ASSETS",
     "run_worker_first": true
-  }
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "birthday-sponsors",
+      "database_id": "cb8b9f80-9c0b-41e1-a11a-ffbbe3e05e01"
+    }
+  ]
 }
