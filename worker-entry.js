@@ -49,15 +49,31 @@ const DATAFAST_WIDGET = `
   title="View live visitors, views, revenue and full analytics"
 >
   <iframe
-    src="https://datafa.st/widgets/6aaac83b36035bb08e146086/realtime?mainTextSize=16&primaryColor=%23e78468"
+    id="datafastRealtimeWidget"
+    src="https://datafa.st/widgets/6aaac83b36035bb08e146086/realtime?mainTextSize=16&primaryColor=%23e78468&liveRefresh=1"
     style="background: transparent !important; border: none; width: 100%; height: 100%;"
     frameborder="0"
     allowtransparency="true"
     title="DataFast Widget"
-    loading="lazy"
+    loading="eager"
     tabindex="-1"
   ></iframe>
-</a>`;
+</a>
+<script>
+(function () {
+  var iframe = document.getElementById('datafastRealtimeWidget');
+  if (!iframe) return;
+  var base = 'https://datafa.st/widgets/6aaac83b36035bb08e146086/realtime?mainTextSize=16&primaryColor=%23e78468';
+  function refreshDataFastWidget() {
+    if (document.hidden) return;
+    iframe.src = base + '&_live=' + Date.now();
+  }
+  window.setInterval(refreshDataFastWidget, 10000);
+  document.addEventListener('visibilitychange', function () {
+    if (!document.hidden) refreshDataFastWidget();
+  });
+})();
+</script>`;
 
 const HOMEPAGE_HEAD = `
 <style>
