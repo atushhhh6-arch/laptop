@@ -1,3 +1,4 @@
+// Cloudflare rebuild trigger after D1 bootstrap hardening.
 import app from './datafast-worker.js';
 
 const SCHEMA = [
@@ -86,9 +87,6 @@ function delegatedEnv(env) {
     prepare: (...args) => db.prepare(...args),
     batch: (...args) => db.batch(...args),
     dump: (...args) => db.dump(...args),
-    // datafast-worker.js also tries a multi-statement exec() migration.
-    // The schema is already created above with individual D1 statements,
-    // so make that migration idempotent and avoid parser/runtime issues.
     exec: async () => ({ count: 0, duration: 0 }),
   } : undefined;
 
