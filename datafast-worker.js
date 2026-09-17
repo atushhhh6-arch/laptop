@@ -113,13 +113,21 @@ export default {
                 border-radius: 20px !important;
               }
 
+              /* Premium visual hierarchy: top biggest, bottom second, all side spots equal */
+              .sponsorList.sponsorWallReady .sponsorCard[data-wall-tier="top"] {
+                z-index: 5;
+              }
+              .sponsorList.sponsorWallReady .sponsorCard[data-wall-tier="bottom"] {
+                z-index: 4;
+              }
+
               @media (max-width: 760px) {
                 .sponsorList.sponsorWallReady {
                   min-height: auto !important;
                   display: grid !important;
                   grid-template-columns: repeat(3, 1fr) !important;
-                  gap: 20px 12px !important;
-                  padding: 30px 18px 58px !important;
+                  gap: 28px 12px !important;
+                  padding: 38px 18px 66px !important;
                 }
                 .sponsorList.sponsorWallReady .sponsorCard {
                   position: relative !important;
@@ -128,10 +136,10 @@ export default {
                   width: 88px !important;
                   height: 88px !important;
                   justify-self: center !important;
-                  transform: rotate(var(--r)) scale(.96) !important;
+                  transform: rotate(var(--r)) scale(var(--s)) !important;
                 }
                 .sponsorList.sponsorWallReady .sponsorCard:hover {
-                  transform: rotate(var(--r)) scale(1.04) translateY(-3px) !important;
+                  transform: rotate(var(--r)) scale(calc(var(--s) + .08)) translateY(-3px) !important;
                 }
               }
             </style>
@@ -160,10 +168,10 @@ export default {
                 }
 
                 const wallPositions = [
-                  [6,12,-8,1.08],[24,6,5,.92],[42,17,-4,1.02],[60,8,7,.90],[78,16,-6,1.06],
-                  [12,40,6,.94],[30,33,-8,1.10],[48,43,4,.92],[66,35,-3,1.00],[82,45,7,.88],
-                  [5,68,-5,.96],[22,61,8,1.04],[39,73,-7,.91],[56,64,5,1.09],[73,70,-4,.95],
-                  [84,76,6,.86],[32,84,3,.84],[61,84,-6,.82]
+                  [6,12,-8],[24,6,5],[42,17,-4],[60,8,7],[78,16,-6],
+                  [12,40,6],[30,33,-8],[48,43,4],[66,35,-3],[82,45,7],
+                  [5,68,-5],[22,61,8],[39,73,-7],[56,64,5],[73,70,-4],
+                  [84,76,6],[32,84,3],[61,84,-6]
                 ];
 
                 function layoutSponsorWall() {
@@ -178,13 +186,23 @@ export default {
 
                   sponsorCards.forEach((card, i) => {
                     const p = wallPositions[i % wallPositions.length];
+                    const hiddenText = card.querySelector('div:not(.avatar)');
+                    const label = (hiddenText?.textContent || '').toLowerCase();
+                    const isTop = label.includes('top sponsor');
+                    const isBottom = label.includes('bottom sponsor');
+
+                    /* Every regular side sponsor stays exactly the same size.
+                       Top sponsor is the largest; bottom sponsor is slightly smaller. */
+                    const scale = isTop ? 1.42 : (isBottom ? 1.24 : 1.00);
+                    const tier = isTop ? 'top' : (isBottom ? 'bottom' : 'regular');
+
                     card.style.setProperty('--x', p[0] + '%');
                     card.style.setProperty('--y', p[1] + '%');
                     card.style.setProperty('--r', p[2] + 'deg');
-                    card.style.setProperty('--s', String(p[3]));
+                    card.style.setProperty('--s', String(scale));
+                    card.dataset.wallTier = tier;
 
                     const img = card.querySelector('.avatar img');
-                    const hiddenText = card.querySelector('div:not(.avatar)');
                     if (img) {
                       img.alt = hiddenText?.querySelector('strong')?.textContent || 'Sponsor logo';
                     }
