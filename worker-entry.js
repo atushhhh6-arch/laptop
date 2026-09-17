@@ -70,13 +70,13 @@ const HOMEPAGE_PATCH = `
   }
 
   var meta = document.querySelector('meta[name="description"]');
-  if (meta) meta.setAttribute('content', 'Sponsor a limited brand placement in Ayush\'s November 13 birthday project. The sponsored distribution may happen earlier if spots fill and logistics are ready.');
+  if (meta) meta.setAttribute('content', "Sponsor a limited brand placement in Ayush's November 13 birthday project. The sponsored distribution may happen earlier if spots fill and logistics are ready.");
 
   var heroTag = document.querySelector('.hero .tag');
   if (heroTag) heroTag.textContent = 'NOVEMBER 13 · MY BIRTHDAY';
 
   var heroLead = document.querySelector('.hero .lead');
-  if (heroLead) heroLead.innerHTML = 'I\'m personally committing to <b>at least 100 burgers</b> for this birthday project no matter what. November 13 is my birthday and the reference date, but if all sponsor spots fill early and logistics are ready, the sponsored distribution can happen <b>before my birthday</b>. Sponsors are buying real brand placements and helping back the overall project.';
+  if (heroLead) heroLead.innerHTML = "I'm personally committing to <b>at least 100 burgers</b> for this birthday project no matter what. November 13 is my birthday and the reference date, but if all sponsor spots fill early and logistics are ready, the sponsored distribution can happen <b>before my birthday</b>. Sponsors are buying real brand placements and helping back the overall project.";
 
   var boxSub = document.querySelector('.boxMessage span');
   if (boxSub) boxSub.textContent = 'Take a spot. Back the project. Get seen while doing it.';
@@ -99,7 +99,7 @@ const HOMEPAGE_PATCH = `
     var copy = birthday.querySelector('.copy');
     if (eyebrow) eyebrow.textContent = 'BIRTHDAY PROJECT · NOVEMBER 13';
     if (heading) heading.textContent = '100 burgers are the commitment. The project can happen earlier.';
-    if (copy) copy.innerHTML = 'I\'m personally funding <b>at least 100 burgers</b> for this birthday project. November 13 is my birthday, but the sponsored distribution does not have to wait until that exact day. If the sponsor spots fill sooner and the logistics are ready, I may run it earlier. Sponsor payments are for brand placements in the project; they are not restricted donations.';
+    if (copy) copy.innerHTML = "I'm personally funding <b>at least 100 burgers</b> for this birthday project. November 13 is my birthday, but the sponsored distribution does not have to wait until that exact day. If the sponsor spots fill sooner and the logistics are ready, I may run it earlier. Sponsor payments are for brand placements in the project; they are not restricted donations.";
   }
 
   document.querySelectorAll('.faqItem').forEach(function (item) {
@@ -108,7 +108,7 @@ const HOMEPAGE_PATCH = `
     if (!q || !a) return;
     var text = q.textContent.toLowerCase();
     if (text.indexOf('why start with 100 burgers') !== -1) {
-      a.textContent = 'Because at least 100 burgers are my personal commitment for the birthday project. Sponsorship can help me make the overall project bigger, but I am not promising that every sponsorship dollar will be spent on food.';
+      a.textContent = "Because at least 100 burgers are my personal commitment for the birthday project. Sponsorship can help me make the overall project bigger, but I am not promising that every sponsorship dollar will be spent on food.";
     }
     if (text.indexOf('what does sponsorship money support') !== -1) {
       a.textContent = 'A sponsor payment buys an advertising/brand placement in the project. Revenue may be used for food, packaging, printing, transport, payment fees, website/platform costs, promotion, production work, time/labor and other project or business expenses. There is no fixed percentage promised for food, and remaining revenue may be retained as compensation or profit after obligations, refunds, fees and expenses.';
