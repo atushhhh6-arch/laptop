@@ -59,6 +59,87 @@ const DATAFAST_WIDGET = `
   ></iframe>
 </a>`;
 
+const HOMEPAGE_PATCH = `
+<script>
+(function () {
+  function byEyebrow(label) {
+    return Array.from(document.querySelectorAll('section')).find(function (section) {
+      var eyebrow = section.querySelector('.eyebrow');
+      return eyebrow && eyebrow.textContent.trim().toUpperCase() === label;
+    });
+  }
+
+  var meta = document.querySelector('meta[name="description"]');
+  if (meta) meta.setAttribute('content', 'Sponsor a limited brand placement in Ayush\'s November 13 birthday project. The sponsored distribution may happen earlier if spots fill and logistics are ready.');
+
+  var heroTag = document.querySelector('.hero .tag');
+  if (heroTag) heroTag.textContent = 'NOVEMBER 13 · MY BIRTHDAY';
+
+  var heroLead = document.querySelector('.hero .lead');
+  if (heroLead) heroLead.innerHTML = 'I\'m personally committing to <b>at least 100 burgers</b> for this birthday project no matter what. November 13 is my birthday and the reference date, but if all sponsor spots fill early and logistics are ready, the sponsored distribution can happen <b>before my birthday</b>. Sponsors are buying real brand placements and helping back the overall project.';
+
+  var boxSub = document.querySelector('.boxMessage span');
+  if (boxSub) boxSub.textContent = 'Take a spot. Back the project. Get seen while doing it.';
+
+  var how = byEyebrow('HOW IT WORKS');
+  if (how) {
+    var steps = how.querySelectorAll('.step');
+    if (steps[4]) {
+      var h = steps[4].querySelector('h3');
+      var p = steps[4].querySelector('p');
+      if (h) h.textContent = 'Back the project';
+      if (p) p.textContent = 'Your sponsorship is a paid brand placement that supports the overall project. It can help expand the distribution, while project spending and allocation remain flexible.';
+    }
+  }
+
+  var birthday = byEyebrow('ON MY BIRTHDAY') || byEyebrow('BIRTHDAY PROJECT');
+  if (birthday) {
+    var eyebrow = birthday.querySelector('.eyebrow');
+    var heading = birthday.querySelector('h2');
+    var copy = birthday.querySelector('.copy');
+    if (eyebrow) eyebrow.textContent = 'BIRTHDAY PROJECT · NOVEMBER 13';
+    if (heading) heading.textContent = '100 burgers are the commitment. The project can happen earlier.';
+    if (copy) copy.innerHTML = 'I\'m personally funding <b>at least 100 burgers</b> for this birthday project. November 13 is my birthday, but the sponsored distribution does not have to wait until that exact day. If the sponsor spots fill sooner and the logistics are ready, I may run it earlier. Sponsor payments are for brand placements in the project; they are not restricted donations.';
+  }
+
+  document.querySelectorAll('.faqItem').forEach(function (item) {
+    var q = item.querySelector('.faqQ');
+    var a = item.querySelector('.faqAInner');
+    if (!q || !a) return;
+    var text = q.textContent.toLowerCase();
+    if (text.indexOf('why start with 100 burgers') !== -1) {
+      a.textContent = 'Because at least 100 burgers are my personal commitment for the birthday project. Sponsorship can help me make the overall project bigger, but I am not promising that every sponsorship dollar will be spent on food.';
+    }
+    if (text.indexOf('what does sponsorship money support') !== -1) {
+      a.textContent = 'A sponsor payment buys an advertising/brand placement in the project. Revenue may be used for food, packaging, printing, transport, payment fees, website/platform costs, promotion, production work, time/labor and other project or business expenses. There is no fixed percentage promised for food, and remaining revenue may be retained as compensation or profit after obligations, refunds, fees and expenses.';
+    }
+  });
+
+  var transparency = byEyebrow('TRANSPARENCY');
+  if (transparency) {
+    var transparencyCopy = transparency.querySelector('.copy');
+    if (transparencyCopy) transparencyCopy.innerHTML = 'I personally commit to <b>at least 100 burgers</b>. Sponsor payments are purchases of advertising/brand placements, not restricted donations. I decide how sponsorship revenue is allocated across food, packaging, printing, transport, payment fees, website/platform costs, promotion, creative/production work, time/labor and other project or business expenses. <b>No fixed amount or percentage of sponsorship revenue is promised for food unless I state it in writing.</b> Revenue remaining after project obligations, refunds, taxes/fees and expenses may be retained as compensation or profit.';
+  }
+
+  var target = new Date('2026-11-13T00:00:00+05:30').getTime();
+  function updateBirthdayCountdown() {
+    var left = Math.max(0, target - Date.now());
+    var values = {
+      days: Math.floor(left / 86400000),
+      hours: Math.floor((left % 86400000) / 3600000),
+      minutes: Math.floor((left % 3600000) / 60000),
+      seconds: Math.floor((left % 60000) / 1000)
+    };
+    Object.keys(values).forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el) el.textContent = String(values[id]).padStart(2, '0');
+    });
+  }
+  updateBirthdayCountdown();
+  setInterval(updateBirthdayCountdown, 200);
+})();
+</script>`;
+
 const SCHEMA = [
   `CREATE TABLE IF NOT EXISTS sponsor_spots_v2 (
     spot_id TEXT PRIMARY KEY,
@@ -204,10 +285,12 @@ async function delegate(request, env, ctx) {
 
   const contentType = response.headers.get('content-type') || '';
   if (!url.pathname.startsWith('/api/') && contentType.includes('text/html')) {
+    var isHome = url.pathname === '/' || url.pathname === '/index.html';
     return new HTMLRewriter()
       .on('body', {
         element(body) {
           body.append(DATAFAST_WIDGET, { html: true });
+          if (isHome) body.append(HOMEPAGE_PATCH, { html: true });
         },
       })
       .transform(response);
